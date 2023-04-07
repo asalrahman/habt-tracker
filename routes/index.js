@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
 
-//---------User model----------//
+//User model//
 const User = require('../models/User');
 const Habit = require('../models/Habit');
 
-//---------Welcome Page----------//
+//Welcome Page//
 router.get('/', (req, res) => res.render('welcome'));
 
-//---------Dashboard GET----------//
+//Dashboard GET//
 var email = "";
 router.get('/dashboard', (req, res) => {
     email = req.query.user;
@@ -35,7 +35,7 @@ router.get('/dashboard', (req, res) => {
 }
 );
 
-//------------------Function to return date string--------------//
+//Function to return date string//
 function getD(n) {
     let d = new Date();
     d.setDate(d.getDate() + n);
@@ -60,7 +60,7 @@ function getD(n) {
     return { date: newDate, day };
 }
 
-//-------------Handle Change View: Daily <--> Weekly--------------//
+//---Handle Change View: Daily <--> Weekly----//
 router.post('/user-view', (req, res) => {
     User.findOne({
         email
@@ -79,13 +79,13 @@ router.post('/user-view', (req, res) => {
         })
 })
 
-//---------Dashboard Add Habit----------//
+//Dashboard Add Habit//
 router.post('/dashboard', (req, res) => {
     const { content } = req.body;
 
     Habit.findOne({ content: content, email: email }).then(habit => {
         if (habit) {
-            //---------Update existing habit----------//
+            //Update existing habit//
             let dates = habit.dates, tzoffset = (new Date()).getTimezoneOffset() * 60000;
             var today = (new Date(Date.now() - tzoffset)).toISOString().slice(0, 10);
             dates.find(function (item, index) {
@@ -119,7 +119,7 @@ router.post('/dashboard', (req, res) => {
                 dates
             });
 
-            //---------Save Habit----------//
+            //Save Habit//
             newHabit
                 .save()
                 .then(habit => {
@@ -131,7 +131,7 @@ router.post('/dashboard', (req, res) => {
     })
 });
 
-//---------Dashboard Add/Remove Habit to/from Favorites----------//
+//Dashboard Add/Remove Habit to/from Favorites//
 router.get("/favorite-habit", (req, res) => {
     let id = req.query.id;
     Habit.findOne({
@@ -160,7 +160,7 @@ router.get("/favorite-habit", (req, res) => {
         })
 });
 
-//-------------Update status of habit completion--------------//
+//---Update status of habit completion----//
 router.get("/status-update", (req, res) => {
     var d = req.query.date;
     var id = req.query.id;
@@ -200,7 +200,7 @@ router.get("/status-update", (req, res) => {
 
 })
 
-//---------Deleting a habit----------//
+//Deleting a habit//
 router.get("/remove", (req, res) => {
     let id = req.query.id;
     Habit.deleteMany({
